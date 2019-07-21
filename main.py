@@ -14,15 +14,19 @@ def get_fact():
     soup = BeautifulSoup(response.content, "html.parser")
     facts = soup.find_all("div", id="content")
 
-    return facts[0].getText()
+    return facts[0].getText().strip()
 
 
 @app.route('/')
 def home():
-    return "FILL ME!"
+    # grab fact, submit to pig latin
+    fact = get_fact()
+    response = requests.post(
+        "http://hidden-journey-62459.herokuapp.com/piglatinize/", data={'input_text': fact})
+    return(
+        f"<html><body><a href=\"{response.url}\">{response.url}</a></body></html>")
 
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 6787))
-    app.run(host='0.0.0.0', port=port)
-
+    app.run(host='0.0.0.0', port=port, debug=True)
